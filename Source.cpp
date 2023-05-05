@@ -44,23 +44,33 @@ int main() {
     set_sign_up(sign_up_page);
     set_login(login_page);
 
+    /***********  background    ***********/
     Texture backgroundTexture;
     backgroundTexture.loadFromFile("background.png");
     Sprite background(backgroundTexture);
     background.setScale(1.5, 1.5);
+    
+    // take text from input field
+    string input[2];        // 0 -> username /   1 -> password
+    Text inputText[2];
+    int inputIndex = 0;
+
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
                 window.close();
             }
-            
+            if (event.type == Event::TextEntered) {
+                input[inputIndex] += static_cast<char>(event.text.unicode);     // converts any letter entered from unicode to char
+            }
+           // if(event)
         }
         window.clear();
         window.draw(background);
-        draw_starting_page(starting_page);
+        //draw_starting_page(starting_page);
         //draw_sign_up(sign_up_page);
-        //draw_login(login_page);
+        draw_login(login_page);
         window.display();
     }
     return 0;
@@ -79,8 +89,9 @@ void draw_starting_page(STARTING_PAGE starting_page) {
     window.draw(starting_page.sign_up);
 }
 void set_starting_page(STARTING_PAGE& starting_page) {
+    string name = "Library Name";
     starting_page.library_name.setFont(italiana);
-    starting_page.library_name.setString("Library Name");
+    starting_page.library_name.setString(name);
     starting_page.library_name.setPosition(300, 300);
     starting_page.library_name.setCharacterSize(88);
     

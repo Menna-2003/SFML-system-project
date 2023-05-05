@@ -7,7 +7,6 @@ using namespace std;
 using namespace sf;
 
 Font italiana, AbrilFatface_Regular;
-Texture library_name;
 
 RenderWindow window(VideoMode(1800, 900), "Library", Style::Default);
 
@@ -49,19 +48,19 @@ int main() {
     backgroundTexture.loadFromFile("background.png");
     Sprite background(backgroundTexture);
     background.setScale(1.5, 1.5);
-    string input_string;
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
                 window.close();
             }
+            
         }
         window.clear();
         window.draw(background);
-        //draw_starting_page(starting_page);
+        draw_starting_page(starting_page);
         //draw_sign_up(sign_up_page);
-        draw_login(login_page);
+        //draw_login(login_page);
         window.display();
     }
     return 0;
@@ -97,7 +96,6 @@ void set_starting_page(STARTING_PAGE& starting_page) {
     starting_page.log_in_button.setFillColor(Color(0, 141, 220));
     starting_page.log_in_button.setPosition(300, 600);
    
-    starting_page.sign_up_button.setOutlineThickness(2);
     starting_page.sign_up_button.setSize(Vector2f(200, 80));
     starting_page.sign_up_button.setFillColor(Color(0, 141, 220, 128));
     starting_page.sign_up_button.setPosition(600, 600);

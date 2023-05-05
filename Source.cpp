@@ -1,10 +1,353 @@
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <conio.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 using namespace std;
 using namespace sf;
 RenderWindow window(VideoMode(1800, 900), "Library", Style::Default);
+
+
+int string_to_int(string price)			// function to convert string to integer
+{
+	int new_price = 0, c = 1;
+
+	for (int i = price.size() - 1; i >= 0; i--)
+	{
+		new_price += c * (price[i] - '0');
+
+		c *= 10;
+	}
+
+	return new_price;
+}
+//******************************	Start of Book struct	*************************
+const int arrsize = 10000;		// max size to the books 
+int fantasy_num, mystery_num, romance_num, non_fiction_num, science_fiction_num; // number of books in each array (section)
+int fantasycounter = 0, mysterycounter = 0, romancecounter = 0, non_fictioncounter = 0, science_fictioncounter = 0;
+
+struct book
+{
+	string title;
+	string author;
+	string description;
+	string type;
+	string status;
+	string price;
+	string numofpages;
+	string review;
+
+} fantasy[arrsize], mystery[arrsize], romance[arrsize], non_fiction[arrsize], science_fiction[arrsize];
+
+vector <pair<string, int>>cart_vector;
+
+//******************************	End of Book struct	*************************
+//******************************	Start of transitions	*************************
+
+void file_to_fantasy()
+//converting file to the fantasy struct
+{
+	string line;
+	int index;
+	ifstream file("fantasy.txt");
+
+	if (file.is_open()) {
+		for (int i = 0; i < fantasy_num; i++) {
+			index = 0;
+			fantasycounter++;
+			while (getline(file, line))
+			{
+				if (index == 0)    fantasy[i].title = line;
+				else if (index == 1)    fantasy[i].author = line;
+				else if (index == 2)    fantasy[i].description = line;
+				else if (index == 3)    fantasy[i].type = line;
+				else if (index == 4)    fantasy[i].status = line;
+				else if (index == 5)    fantasy[i].price = line;
+				else if (index == 6)    fantasy[i].numofpages = line;
+				else if (index == 7)    fantasy[i].review = line;
+				index++;
+				if (line == "##") { fantasycounter++; break; }
+				if (index == 8)		break;
+			}
+		}
+	}
+	file.close();
+}
+void file_to_mystery()
+//converting file to the mystery struct
+{
+	string line;
+	int index;
+	ifstream file("mystery.txt");
+
+	if (file.is_open()) {
+		for (int i = 0; i < mystery_num; i++) {
+			index = 0;
+			mysterycounter++;
+			while (getline(file, line))
+			{
+				if (index == 0)    mystery[i].title = line;
+				else if (index == 1)    mystery[i].author = line;
+				else if (index == 2)    mystery[i].description = line;
+				else if (index == 3)    mystery[i].type = line;
+				else if (index == 4)    mystery[i].status = line;
+				else if (index == 5)    mystery[i].price = line;
+				else if (index == 6)    mystery[i].numofpages = line;
+				else if (index == 7)    mystery[i].review = line;
+				index++;
+				if (line == "##") { mysterycounter++; break; }
+				if (index == 8)	break;
+			}
+		}
+	}
+
+	file.close();
+}
+void file_to_romance()
+//converting file to the romance struct
+{
+	string line;
+	int index;
+	ifstream file("romance.txt");
+
+	if (file.is_open()) {
+		for (int i = 0; i < romance_num; i++) {
+			index = 0;
+			romancecounter++;
+			while (getline(file, line))
+			{
+				if (index == 0)    romance[i].title = line;
+				else if (index == 1)    romance[i].author = line;
+				else if (index == 2)    romance[i].description = line;
+				else if (index == 3)    romance[i].type = line;
+				else if (index == 4)    romance[i].status = line;
+				else if (index == 5)    romance[i].price = line;
+				else if (index == 6)    romance[i].numofpages = line;
+				else if (index == 7)    romance[i].review = line;
+				index++;
+				if (line == "##") { romancecounter++; break; }
+				if (index == 8)	break;
+			}
+		}
+	}
+
+	file.close();
+}
+void file_to_non_fiction()
+//converting file to the non fiction struct
+{
+	string line;
+	int index;
+	ifstream file("nonfiction.txt");
+
+	if (file.is_open()) {
+		for (int i = 0; i < non_fiction_num; i++) {
+			index = 0;
+			non_fictioncounter++;
+			while (getline(file, line))
+			{
+				if (index == 0)    non_fiction[i].title = line;
+				else if (index == 1)    non_fiction[i].author = line;
+				else if (index == 2)    non_fiction[i].description = line;
+				else if (index == 3)    non_fiction[i].type = line;
+				else if (index == 4)    non_fiction[i].status = line;
+				else if (index == 5)    non_fiction[i].price = line;
+				else if (index == 6)    non_fiction[i].numofpages = line;
+				else if (index == 7)    non_fiction[i].review = line;
+				index++;
+				if (index == 8)	break;
+				if (line == "##") { non_fictioncounter++; break; }
+
+			}
+		}
+	}
+	file.close();
+}
+void file_to_science_fiction()
+//converting file to the science fiction struct
+{
+	string line;
+	int index;
+	ifstream file("science_fiction.txt");
+
+	if (file.is_open()) {
+		for (int i = 0; i < science_fiction_num; i++) {
+			index = 0;
+			science_fictioncounter++;
+			while (getline(file, line))
+			{
+				if (index == 0)    science_fiction[i].title = line;
+				else if (index == 1)    science_fiction[i].author = line;
+				else if (index == 2)    science_fiction[i].description = line;
+				else if (index == 3)    science_fiction[i].type = line;
+				else if (index == 4)    science_fiction[i].status = line;
+				else if (index == 5)    science_fiction[i].price = line;
+				else if (index == 6)    science_fiction[i].numofpages = line;
+				else if (index == 7)    science_fiction[i].review = line;
+				index++;
+				if (line == "##") { science_fictioncounter++; break; }
+				if (index == 8)	break;
+			}
+		}
+	}
+
+	file.close();
+}
+void struct_to_fantasy()
+{
+	ofstream file;
+	file.open("fantasy.txt");
+
+	for (int i = 0; i < fantasy_num; i++)
+	{
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 0) file << fantasy[i].title << endl;
+			else if (j == 1) file << fantasy[i].author << endl;
+			else if (j == 2) file << fantasy[i].description << endl;
+			else if (j == 3) file << fantasy[i].type << endl;
+			else if (j == 4) file << fantasy[i].status << endl;
+			else if (j == 5) file << fantasy[i].price << endl;
+			else if (j == 6) file << fantasy[i].numofpages << endl;
+			else if (j == 7) file << fantasy[i].review << endl;
+		}
+	}
+	file << "##";
+	file.close();
+}
+void struct_to_mystery()
+{
+	ofstream file;
+	file.open("mystery.txt");
+
+	for (int i = 0; i < mystery_num; i++)
+	{
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 0) file << mystery[i].title << endl;
+			else if (j == 1) file << mystery[i].author << endl;
+			else if (j == 2) file << mystery[i].description << endl;
+			else if (j == 3) file << mystery[i].type << endl;
+			else if (j == 4) file << mystery[i].status << endl;
+			else if (j == 5) file << mystery[i].price << endl;
+			else if (j == 6) file << mystery[i].numofpages << endl;
+			else if (j == 7) file << mystery[i].review << endl;
+		}
+	}
+	file << "##";
+	file.close();
+}
+void struct_to_romantic()
+{
+	ofstream file;
+	file.open("romance.txt");
+
+	for (int i = 0; i < romance_num; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 0) file << romance[i].title << endl;
+			else if (j == 1) file << romance[i].author << endl;
+			else if (j == 2) file << romance[i].description << endl;
+			else if (j == 3) file << romance[i].type << endl;
+			else if (j == 4) file << romance[i].status << endl;
+			else if (j == 5) file << romance[i].price << endl;
+			else if (j == 6) file << romance[i].numofpages << endl;
+			else if (j == 7) file << romance[i].review << endl;
+		}
+	}
+	file << "##";
+	file.close();
+}
+void struct_to_non_fiction()
+{
+	ofstream file;
+	file.open("non_fiction.txt");
+
+	for (int i = 0; i < non_fiction_num; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 0) file << non_fiction[i].title << endl;
+			else if (j == 1) file << non_fiction[i].author << endl;
+			else if (j == 2) file << non_fiction[i].description << endl;
+			else if (j == 3) file << non_fiction[i].type << endl;
+			else if (j == 4) file << non_fiction[i].status << endl;
+			else if (j == 5) file << non_fiction[i].price << endl;
+			else if (j == 6) file << non_fiction[i].numofpages << endl;
+			else if (j == 7) file << non_fiction[i].review << endl;
+		}
+	}
+	file << "##";
+	file.close();
+}
+void struct_to_scientific_fiction()
+{
+	ofstream file;
+	file.open("science_fiction.txt");
+
+	for (int i = 0; i < science_fiction_num; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 0) file << science_fiction[i].title << endl;
+			else if (j == 1) file << science_fiction[i].author << endl;
+			else if (j == 2) file << science_fiction[i].description << endl;
+			else if (j == 3) file << science_fiction[i].type << endl;
+			else if (j == 4) file << science_fiction[i].status << endl;
+			else if (j == 5) file << science_fiction[i].price << endl;
+			else if (j == 6) file << science_fiction[i].numofpages << endl;
+			else if (j == 7) file << science_fiction[i].review << endl;
+		}
+	}
+	file << "##";
+	file.close();
+}
+void files_to_struct() {
+	file_to_fantasy();
+	file_to_mystery();
+	file_to_romance();
+	file_to_non_fiction();
+	file_to_science_fiction();
+}
+void structs_to_files()
+{
+	struct_to_fantasy();
+	struct_to_mystery();
+	struct_to_romantic();
+	struct_to_non_fiction();
+	struct_to_scientific_fiction();
+}
+void file_to_counter()
+{
+	ifstream file("bookssize.txt");
+	int i = 0;
+	string line;
+	while (getline(file, line))
+	{
+		if (i == 0) { fantasy_num = string_to_int(line); }
+		else if (i == 1) { mystery_num = string_to_int(line); }
+		else if (i == 2) { romance_num = string_to_int(line); }
+		else if (i == 3) { non_fiction_num = string_to_int(line); }
+		else if (i == 4) { science_fiction_num = string_to_int(line); }
+		i++;
+	}
+
+	file.close();
+}
+void counetr_to_file()
+{
+	ofstream file("bookssize.txt");
+	file << fantasy_num << endl << mystery_num << endl << romance_num << endl;
+	file << non_fiction_num << endl << science_fiction_num << endl;
+	file.close();
+}
+//******************************	 End of transitions		*************************
 
 Font italiana, AbrilFatface_Regular;
 Texture homeIcon_texture, cartIcon_texture, fantacy_texture, mystery_texture, romance_texture, scienceFiction_texture, nonFiction_texture;

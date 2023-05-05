@@ -361,6 +361,9 @@ struct  SIGN_UP {
     Text sign_up_label, sign_up_username, sign_up_password, reader, administrator, sign_up_submit;
     RectangleShape sign_up_submit_button, sign_up_input_username, sign_up_input_password;
     CircleShape reader_check, administrator_check;
+    String userInput, passInput;
+    Text userText, passText;
+    int focusedTextField = 0;
 };
 struct  LOG_IN {
     Text login_label, login_username, login_password, login_submit;
@@ -389,10 +392,6 @@ void draw_home(HOME);
 void set_menu(MENU&);
 void draw_menu(MENU);
 
-string input[2];   // 0-> username   1 -> password
-Text inputText[2];
-int inputIndex = 0;
-
 int main() {
     STARTING_PAGE starting_page;
     SIGN_UP sign_up_page;
@@ -413,20 +412,6 @@ int main() {
     Sprite background(backgroundTexture);
     background.setScale(1.5, 1.5);
 
-    String userInput, passInput;
-    Text userText , passText;
-    userText.setFont(italiana);
-    userText.setCharacterSize(30);
-    userText.setFillColor(sf::Color::White);
-    userText.setPosition(500, 377);
-    
-    passText.setFont(italiana);
-    passText.setCharacterSize(30);
-    passText.setFillColor(sf::Color::White);
-    passText.setPosition(500, 580);
-
-    int focusedTextField = 0;
-
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -437,20 +422,29 @@ int main() {
 
             case Event::TextEntered:        // Handle text input
                 if (event.text.unicode >= 32 && event.text.unicode <= 126) {
-                    if (focusedTextField == 0) {
-                        userText.setString(userText.getString() + static_cast<char>(event.text.unicode));
+                    if (sign_up_page.focusedTextField == 0) {
+                        sign_up_page.userText.setString(sign_up_page.userText.getString() + static_cast<char>(event.text.unicode));
                     }
-                    else if (focusedTextField == 1) {
-                        passText.setString(passText.getString() + static_cast<char>(event.text.unicode));
+                    else if (sign_up_page.focusedTextField == 1) {
+                        sign_up_page.passText.setString(sign_up_page.passText.getString() + static_cast<char>(event.text.unicode));
                     }
                 }        break;
 
             case Event::KeyPressed:        // Handle key presses
                 if (event.key.code == Keyboard::Enter)
                 {
-                    focusedTextField++;             // Move focus to the next text field
-                    if (focusedTextField >= 2) {
-                        focusedTextField = 0;
+                    sign_up_page.focusedTextField++;             // Move focus to the next text field
+                    if (sign_up_page.focusedTextField >= 2) {
+                        sign_up_page.focusedTextField = 0;
+                    }
+                }            break;
+            case Event::MouseButtonPressed:      // Handle mouse button presses
+                if (event.mouseButton.button == Mouse::Left){        // Check if Clear button was clicked
+                    FloatRect clearButtonBounds = sign_up_page.sign_up_submit_button.getGlobalBounds();
+                    Vector2f mousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (clearButtonBounds.contains(mousePosition)){       // Clear text fields
+                        sign_up_page.userText.setString("");
+                        sign_up_page.passText.setString("");
                     }
                 }            break;
             default:         break;
@@ -459,8 +453,6 @@ int main() {
     
         window.clear();
         window.draw(background);
-        window.draw(userText);
-        window.draw(passText);
         //draw_starting_page(starting_page);
         draw_sign_up(sign_up_page);
         //draw_login(login_page);
@@ -468,6 +460,7 @@ int main() {
         //draw_menu(menu);
         window.display();
     }
+
     return 0;
 }
 
@@ -578,6 +571,17 @@ void set_sign_up(SIGN_UP& sign_up_page) {
     sign_up_page.sign_up_input_password.setPosition(500, 580);
     sign_up_page.sign_up_input_password.setOutlineColor(Color::White);
     sign_up_page.sign_up_input_password.setOutlineThickness(-0.5);
+
+    sign_up_page.userText.setFont(italiana);
+    sign_up_page.userText.setCharacterSize(30);
+    sign_up_page.userText.setFillColor(sf::Color::White);
+    sign_up_page.userText.setPosition(500, 377);
+
+    sign_up_page.passText.setFont(italiana);
+    sign_up_page.passText.setCharacterSize(30);
+    sign_up_page.passText.setFillColor(sf::Color::White);
+    sign_up_page.passText.setPosition(500, 580);
+
 }
 void draw_sign_up(SIGN_UP sign_up_page) {
     window.draw(sign_up_page.sign_up_label);
@@ -591,6 +595,9 @@ void draw_sign_up(SIGN_UP sign_up_page) {
     window.draw(sign_up_page.administrator);
     window.draw(sign_up_page.sign_up_input_username);
     window.draw(sign_up_page.sign_up_input_password);
+    window.draw(sign_up_page.passText);
+    window.draw(sign_up_page.userText);
+
 }
                                   
                                    /****************                log in page             ****************/

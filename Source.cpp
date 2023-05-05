@@ -352,6 +352,7 @@ void counetr_to_file()
 Font italiana, AbrilFatface_Regular;
 Texture homeIcon_texture, cartIcon_texture, fantacy_texture, mystery_texture, romance_texture, scienceFiction_texture, nonFiction_texture;
 
+/////////     SFML code ////////////
 struct STARTING_PAGE{
     Text sign_up, log_in, library_name;
     RectangleShape sign_up_button, log_in_button;
@@ -377,21 +378,20 @@ struct MENU
 };
 
 void texturesANDfonts();
-
 void set_starting_page(STARTING_PAGE&);
 void draw_starting_page(STARTING_PAGE);
-
 void set_sign_up(SIGN_UP&);
 void draw_sign_up(SIGN_UP);
-
 void set_login(LOG_IN&);
 void draw_login(LOG_IN);
-
 void set_home(HOME&);
 void draw_home(HOME);
-
 void set_menu(MENU&);
 void draw_menu(MENU);
+
+string input[2];   // 0-> username   1 -> password
+Text inputText[2];
+int inputIndex = 0;
 
 int main() {
     STARTING_PAGE starting_page;
@@ -413,17 +413,56 @@ int main() {
     Sprite background(backgroundTexture);
     background.setScale(1.5, 1.5);
 
+    String userInput, passInput;
+    Text userText , passText;
+    userText.setFont(italiana);
+    userText.setCharacterSize(30);
+    userText.setFillColor(sf::Color::White);
+    userText.setPosition(500, 377);
+    
+    passText.setFont(italiana);
+    passText.setCharacterSize(30);
+    passText.setFillColor(sf::Color::White);
+    passText.setPosition(500, 580);
+
+    int focusedTextField = 0;
+
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
-            if (event.type == Event::Closed) {
-                window.close();
+            switch (event.type)
+            {
+            case Event::Closed:
+                window.close();        break;
+
+            case Event::TextEntered:        // Handle text input
+                if (event.text.unicode >= 32 && event.text.unicode <= 126) {
+                    if (focusedTextField == 0) {
+                        userText.setString(userText.getString() + static_cast<char>(event.text.unicode));
+                    }
+                    else if (focusedTextField == 1) {
+                        passText.setString(passText.getString() + static_cast<char>(event.text.unicode));
+                    }
+                }        break;
+
+            case Event::KeyPressed:        // Handle key presses
+                if (event.key.code == Keyboard::Enter)
+                {
+                    focusedTextField++;             // Move focus to the next text field
+                    if (focusedTextField >= 2) {
+                        focusedTextField = 0;
+                    }
+                }            break;
+            default:         break;
             }
-        }
+     }
+    
         window.clear();
         window.draw(background);
+        window.draw(userText);
+        window.draw(passText);
         //draw_starting_page(starting_page);
-        //draw_sign_up(sign_up_page);
+        draw_sign_up(sign_up_page);
         //draw_login(login_page);
         //draw_home(home);
         //draw_menu(menu);

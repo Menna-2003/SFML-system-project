@@ -368,6 +368,9 @@ struct  SIGN_UP {
 struct  LOG_IN {
     Text login_label, login_username, login_password, login_submit;
     RectangleShape login_submit_button, login_input_username, login_input_password;
+    String userInput, passInput;
+    Text userText, passText;
+    int focusedTextField = 0;
 };
 struct HOME
 {
@@ -428,6 +431,12 @@ int main() {
                     else if (sign_up_page.focusedTextField == 1) {
                         sign_up_page.passText.setString(sign_up_page.passText.getString() + static_cast<char>(event.text.unicode));
                     }
+                    if (login_page.focusedTextField == 0) {
+                        login_page.userText.setString(login_page.userText.getString() + static_cast<char>(event.text.unicode));
+                    }
+                    else if (login_page.focusedTextField == 1) {
+                        login_page.passText.setString(login_page.passText.getString() + static_cast<char>(event.text.unicode));
+                    }
                 }        break;
 
             case Event::KeyPressed:        // Handle key presses
@@ -436,6 +445,10 @@ int main() {
                     sign_up_page.focusedTextField++;             // Move focus to the next text field
                     if (sign_up_page.focusedTextField >= 2) {
                         sign_up_page.focusedTextField = 0;
+                    }
+                    login_page.focusedTextField++;             // Move focus to the next text field
+                    if (login_page.focusedTextField >= 2) {
+                        login_page.focusedTextField = 0;
                     }
                 }            break;
             case Event::MouseButtonPressed:      // Handle mouse button presses
@@ -446,6 +459,12 @@ int main() {
                         sign_up_page.userText.setString("");
                         sign_up_page.passText.setString("");
                     }
+                    FloatRect clearButtonBounds2 = login_page.login_submit_button.getGlobalBounds();
+                    Vector2f mousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (clearButtonBounds2.contains(mousePosition2)) {       // Clear text fields
+                        login_page.userText.setString("");
+                        login_page.passText.setString("");
+                    }
                 }            break;
             default:         break;
             }
@@ -454,8 +473,8 @@ int main() {
         window.clear();
         window.draw(background);
         //draw_starting_page(starting_page);
-        draw_sign_up(sign_up_page);
-        //draw_login(login_page);
+        //draw_sign_up(sign_up_page);
+        draw_login(login_page);
         //draw_home(home);
         //draw_menu(menu);
         window.display();
@@ -639,6 +658,17 @@ void set_login(LOG_IN& login_page) {
     login_page.login_input_password.setPosition(500, 580);
     login_page.login_input_password.setOutlineColor(Color::White);
     login_page.login_input_password.setOutlineThickness(-0.5);
+
+
+    login_page.userText.setFont(italiana);
+    login_page.userText.setCharacterSize(30);
+    login_page.userText.setFillColor(sf::Color::White);
+    login_page.userText.setPosition(500, 377);
+
+    login_page.passText.setFont(italiana);
+    login_page.passText.setCharacterSize(30);
+    login_page.passText.setFillColor(sf::Color::White);
+    login_page.passText.setPosition(500, 580);
 }
 void draw_login(LOG_IN login_page) {
     window.draw(login_page.login_label);
@@ -648,6 +678,8 @@ void draw_login(LOG_IN login_page) {
     window.draw(login_page.login_submit);
     window.draw(login_page.login_input_username);
     window.draw(login_page.login_input_password);
+    window.draw(login_page.passText);
+    window.draw(login_page.userText);
 }
 
                                     /****************                home            ****************/

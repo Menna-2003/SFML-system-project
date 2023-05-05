@@ -44,33 +44,22 @@ int main() {
     set_sign_up(sign_up_page);
     set_login(login_page);
 
-    /***********  background    ***********/
     Texture backgroundTexture;
     backgroundTexture.loadFromFile("background.png");
     Sprite background(backgroundTexture);
     background.setScale(1.5, 1.5);
-    
-    // take text from input field
-    string input[2];        // 0 -> username /   1 -> password
-    Text inputText[2];
-    int inputIndex = 0;
-
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::Closed) {
                 window.close();
             }
-            if (event.type == Event::TextEntered) {
-                input[inputIndex] += static_cast<char>(event.text.unicode);     // converts any letter entered from unicode to char
-            }
-           // if(event)
         }
         window.clear();
         window.draw(background);
-        //draw_starting_page(starting_page);
+        draw_starting_page(starting_page);
         //draw_sign_up(sign_up_page);
-        draw_login(login_page);
+        //draw_login(login_page);
         window.display();
     }
     return 0;
@@ -189,7 +178,7 @@ void draw_sign_up(SIGN_UP sign_up_page) {
     window.draw(sign_up_page.sign_up_input_password);
 }
                                   
-                                  /****************                log in page             ****************/
+                                   /****************                log in page             ****************/
 
 void set_login(LOG_IN& login_page) {
     login_page.login_label.setFont(italiana);

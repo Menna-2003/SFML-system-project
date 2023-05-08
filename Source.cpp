@@ -367,7 +367,10 @@ void information_to_file()
 //******************************	 End of transitions		*************************
 
 Font italiana, AbrilFatface_Regular;
-Texture homeIcon_texture, cartIcon_texture, fantacy_texture, mystery_texture, romance_texture, scienceFiction_texture, nonFiction_texture , f1t;
+Texture homeIcon_texture, cartIcon_texture, fantacy_texture, mystery_texture, romance_texture, scienceFiction_texture, nonFiction_texture ;
+Texture f1t, f2t, f3t, f4t, f5t, f6t, f7t, f8t, f9t, f10t, m1t, m2t, m3t, m4t, m5t, m6t, m7t, m8t, m9t, m10t, m11t, r1t, r2t, r3t, r4t, r5t, r6t, r7t, r8t, r9t, r10;
+Texture s1t, s2t, s3t, s4t, s5t, s6t, s7t, s8t, s9t, s10t;
+Texture  n1t, n2t, n3t, n4t, n5t, n6t, n7t, n8t, n9t, n10t;
 
 /////////     SFML code ////////////
 struct STARTING_PAGE {
@@ -399,17 +402,12 @@ struct HOME
     Text fantacy_label, mystery_label, romance_label, scienceFiction_label, nonFiction_label;
     Sprite fantacy_sprite, mystery_sprite, romance_sprite, scienceFiction_sprite, nonFiction_sprite;
     bool visible = false;
+    int section;
 };
 struct MENU
 {
     Sprite homeIcon_sprite, cartIcon_sprite;
     Text logOut;
-    bool visible = false;
-};
-struct DISPLAYBOOK
-{
-    Text title_, author_, description_, type_, status_, price_, numofpages_, review_;
-    Sprite cover;
     bool visible = false;
 };
 struct DROPDOWNBOX
@@ -418,6 +416,24 @@ struct DROPDOWNBOX
     Text boxLabel;
     vector<Text>books;
     bool visible = false;
+};
+struct DISPLAYBOOK
+{
+    Text title_, author_, description_, type_, status_, price_, numofpages_, review_;
+    Sprite cover;
+    bool visible = false;
+}
+FANTASY[10], MYSTERY[11], ROMANCE[10], NONFICTION[10], SCIFI[10];
+struct Edit {
+    string title;
+    string author;
+    string description;
+    string type;
+    string status;
+    string price;
+    string numofpages;
+    string review;
+    string countity;
 };
 
 void texturesANDfonts();
@@ -431,9 +447,9 @@ void set_home(HOME&);
 void draw_home(HOME);
 void set_menu(MENU&);
 void draw_menu(MENU);
-void set_displaybook(DISPLAYBOOK&);
-void draw_displaybook(DISPLAYBOOK);
-void set_dropdownbox(DROPDOWNBOX&);
+void set_displaybook(DISPLAYBOOK&, int section, int i);
+void draw_displaybook(DISPLAYBOOK ,int,int);
+void set_dropdownbox(DROPDOWNBOX& , HOME);
 void draw_dropdownbox(DROPDOWNBOX);
 
 int main() {
@@ -457,8 +473,8 @@ int main() {
     set_login(login_page);
     set_home(home);
     set_menu(menu);
-    set_displaybook(displaybook);
-    set_dropdownbox(dropdownbox);
+    set_displaybook(displaybook ,1 ,1 );
+    set_dropdownbox(dropdownbox , home);
 
     //////////// background ///////////// 
     Texture backgroundTexture;
@@ -599,7 +615,7 @@ int main() {
 
                     FloatRect menubounds = menu.homeIcon_sprite.getGlobalBounds();
                     Vector2f menumousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
-                    if (menubounds.contains(menumousePosition)) {       // Clear text fields
+                    if (menubounds.contains(menumousePosition)) {       
                         displaybook.visible = false;
                         home.visible = true;
                     }
@@ -612,9 +628,16 @@ int main() {
                     }
                     FloatRect menubounds3 = menu.cartIcon_sprite.getGlobalBounds();
                     Vector2f menumousePosition3 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
-                    if (menubounds3.contains(menumousePosition3)) {       // Clear text fields
+                    if (menubounds3.contains(menumousePosition3)) {       
                         displaybook.visible = false;
                         home.visible = false;
+                    }
+                    FloatRect fantacyClick = home.fantacy_sprite.getGlobalBounds();
+                    Vector2f fantacyClickmousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (fantacyClick.contains(fantacyClickmousePosition)) {       
+                        home.section = 1;
+                        home.visible = false;
+                        dropdownbox.visible = true;
                     }
 
                 }            break;
@@ -641,8 +664,10 @@ int main() {
             draw_menu(menu);
             draw_home(home);
         }
-        else if(draw_dropdownbox.visible){
+        else if(dropdownbox.visible){
             draw_dropdownbox(dropdownbox);
+            draw_menu(menu);
+            draw_displaybook(displaybook , 1 , 1);
         }
         window.display();
 
@@ -948,32 +973,292 @@ void draw_menu(MENU menu) {
     window.draw(menu.logOut);
 }
 
-void set_displaybook(DISPLAYBOOK& displaybook) {
-    displaybook.title_.setString("fmdkjfoidjsf");
-    displaybook.title_.setPosition(100, 100);
-    displaybook.title_.setCharacterSize(50);
-    displaybook.title_.setFont(italiana);
-    
-    displaybook.cover.setScale(0.5, 0.5);
-    displaybook.cover.setTexture(f1t);
-    displaybook.cover.setPosition(100, 100);
+void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
+    if (section == 1) {
+        FANTASY[i].title_.setString(fantasy[i].title);
+        FANTASY[i].title_.setPosition(300, 300);
+        FANTASY[i].title_.setCharacterSize(50);
+        FANTASY[i].title_.setFont(italiana);
+
+        FANTASY[i].author_.setString(fantasy[i].author);
+        FANTASY[i].author_.setPosition(100, 100);
+        FANTASY[i].author_.setCharacterSize(50);
+        FANTASY[i].author_.setFont(italiana);
+
+
+        FANTASY[i].type_.setString(fantasy[i].type);
+        FANTASY[i].type_.setPosition(100, 100);
+        FANTASY[i].type_.setCharacterSize(50);
+        FANTASY[i].type_.setFont(italiana);
+
+
+        FANTASY[i].status_.setString(mystery[i].status);
+        FANTASY[i].status_.setPosition(100, 100);
+        FANTASY[i].status_.setCharacterSize(50);
+        FANTASY[i].status_.setFont(italiana);
+
+        FANTASY[i].price_.setString(fantasy[i].price);
+        FANTASY[i].price_.setPosition(100, 100);
+        FANTASY[i].price_.setCharacterSize(50);
+        FANTASY[i].price_.setFont(italiana);
+
+        FANTASY[i].numofpages_.setString(fantasy[i].numofpages);
+        FANTASY[i].numofpages_.setPosition(100, 100);
+        FANTASY[i].numofpages_.setCharacterSize(50);
+        FANTASY[i].numofpages_.setFont(italiana);
+
+        FANTASY[i].review_.setString(fantasy[i].review);
+        FANTASY[i].review_.setPosition(100, 100);
+        FANTASY[i].review_.setCharacterSize(50);
+        FANTASY[i].review_.setFont(italiana);
+
+
+        FANTASY[i].cover.setScale(0.5, 0.5);
+        FANTASY[i].cover.setTexture(f1t);
+        FANTASY[i].cover.setPosition(100, 100);
+
+    }
+
+    else if (section == 2)
+    {
+        MYSTERY[i].title_.setString(mystery[i].title);
+        MYSTERY[i].title_.setPosition(100, 100);
+        MYSTERY[i].title_.setCharacterSize(50);
+        MYSTERY[i].title_.setFont(italiana);
+
+        MYSTERY[i].author_.setString(mystery[i].author);
+        MYSTERY[i].author_.setPosition(100, 110);
+        MYSTERY[i].author_.setCharacterSize(50);
+        MYSTERY[i].author_.setFont(italiana);
+
+        MYSTERY[i].type_.setString(mystery[i].type);
+        MYSTERY[i].type_.setPosition(100, 100);
+        MYSTERY[i].type_.setCharacterSize(50);
+        MYSTERY[i].type_.setFont(italiana);
+
+        MYSTERY[i].status_.setString(mystery[i].status);
+        MYSTERY[i].status_.setPosition(100, 100);
+        MYSTERY[i].status_.setCharacterSize(50);
+        MYSTERY[i].status_.setFont(italiana);
+
+        MYSTERY[i].price_.setString(mystery[i].price);
+        MYSTERY[i].price_.setPosition(100, 100);
+        MYSTERY[i].price_.setCharacterSize(50);
+        MYSTERY[i].price_.setFont(italiana);
+
+        MYSTERY[i].numofpages_.setString(mystery[i].numofpages);
+        MYSTERY[i].numofpages_.setPosition(100, 100);
+        MYSTERY[i].numofpages_.setCharacterSize(50);
+        MYSTERY[i].numofpages_.setFont(italiana);
+
+        MYSTERY[i].review_.setString(mystery[i].review);
+        MYSTERY[i].review_.setPosition(100, 100);
+        MYSTERY[i].review_.setCharacterSize(50);
+        MYSTERY[i].review_.setFont(italiana);
+
+        displaybook.cover.setScale(0.5, 0.5);
+        displaybook.cover.setTexture(f1t);
+        displaybook.cover.setPosition(100, 100);
+    }
+
+    else if (section = 3)
+    {
+        ROMANCE[i].title_.setString(romance[i].title);
+        ROMANCE[i].title_.setPosition(100, 100);
+        ROMANCE[i].title_.setCharacterSize(50);
+        ROMANCE[i].title_.setFont(italiana);
+
+        ROMANCE[i].author_.setString(romance[i].author);
+        ROMANCE[i].author_.setPosition(100, 100);
+        ROMANCE[i].author_.setCharacterSize(50);
+        ROMANCE[i].author_.setFont(italiana);
+
+        ROMANCE[i].type_.setString(romance[i].type);
+        ROMANCE[i].type_.setPosition(100, 100);
+        ROMANCE[i].type_.setCharacterSize(50);
+        ROMANCE[i].type_.setFont(italiana);
+
+        ROMANCE[i].status_.setString(romance[i].status);
+        ROMANCE[i].status_.setPosition(100, 100);
+        ROMANCE[i].status_.setCharacterSize(50);
+        ROMANCE[i].status_.setFont(italiana);
+
+        ROMANCE[i].price_.setString(romance[i].price);
+        ROMANCE[i].price_.setPosition(100, 100);
+        ROMANCE[i].price_.setCharacterSize(50);
+        ROMANCE[i].price_.setFont(italiana);
+
+        ROMANCE[i].numofpages_.setString(romance[i].numofpages);
+        ROMANCE[i].numofpages_.setPosition(100, 100);
+        ROMANCE[i].numofpages_.setCharacterSize(50);
+        ROMANCE[i].numofpages_.setFont(italiana);
+
+        ROMANCE[i].review_.setString(romance[i].review);
+        ROMANCE[i].review_.setPosition(100, 100);
+        ROMANCE[i].review_.setCharacterSize(50);
+        ROMANCE[i].review_.setFont(italiana);
+
+        ROMANCE[i].cover.setScale(0.5, 0.5);
+        ROMANCE[i].cover.setTexture(f1t);
+        ROMANCE[i].cover.setPosition(100, 100);
+    }
+
+    else if (section = 4)
+    {
+        NONFICTION[i].title_.setString(non_fiction[i].title);
+        NONFICTION[i].title_.setPosition(100, 100);
+        NONFICTION[i].title_.setCharacterSize(50);
+        NONFICTION[i].title_.setFont(italiana);
+
+        NONFICTION[i].author_.setString(non_fiction[i].author);
+        NONFICTION[i].author_.setPosition(100, 100);
+        NONFICTION[i].author_.setCharacterSize(50);
+        NONFICTION[i].author_.setFont(italiana);
+
+        NONFICTION[i].type_.setString(non_fiction[i].type);
+        NONFICTION[i].type_.setPosition(100, 100);
+        NONFICTION[i].type_.setCharacterSize(50);
+        NONFICTION[i].type_.setFont(italiana);
+
+        NONFICTION[i].status_.setString(non_fiction[i].status);
+        NONFICTION[i].status_.setPosition(100, 100);
+        NONFICTION[i].status_.setCharacterSize(50);
+        NONFICTION[i].status_.setFont(italiana);
+
+        NONFICTION[i].price_.setString(non_fiction[i].price);
+        NONFICTION[i].price_.setPosition(100, 100);
+        NONFICTION[i].price_.setCharacterSize(50);
+        NONFICTION[i].price_.setFont(italiana);
+
+        NONFICTION[i].numofpages_.setString(non_fiction[i].numofpages);
+        NONFICTION[i].numofpages_.setPosition(100, 100);
+        NONFICTION[i].numofpages_.setCharacterSize(50);
+        NONFICTION[i].numofpages_.setFont(italiana);
+
+        NONFICTION[i].review_.setString(non_fiction[i].review);
+        NONFICTION[i].review_.setPosition(100, 100);
+        NONFICTION[i].review_.setCharacterSize(50);
+        NONFICTION[i].review_.setFont(italiana);
+
+
+
+        NONFICTION[i].cover.setScale(0.5, 0.5);
+        NONFICTION[i].cover.setTexture(f1t);
+        NONFICTION[i].cover.setPosition(100, 100);
+
+    }
+
+    else
+    {
+        SCIFI[i].title_.setString(science_fiction[i].title);
+        SCIFI[i].title_.setPosition(100, 100);
+        SCIFI[i].title_.setCharacterSize(50);
+        SCIFI[i].title_.setFont(italiana);
+
+        SCIFI[i].author_.setString(science_fiction[i].author);
+        SCIFI[i].author_.setPosition(100, 100);
+        SCIFI[i].author_.setCharacterSize(50);
+        SCIFI[i].author_.setFont(italiana);
+
+        SCIFI[i].type_.setString(science_fiction[i].type);
+        SCIFI[i].type_.setPosition(100, 100);
+        SCIFI[i].type_.setCharacterSize(50);
+        SCIFI[i].type_.setFont(italiana);
+
+        SCIFI[i].status_.setString(science_fiction[i].status);
+        SCIFI[i].status_.setPosition(100, 100);
+        SCIFI[i].status_.setCharacterSize(50);
+        SCIFI[i].status_.setFont(italiana);
+
+        SCIFI[i].price_.setString(science_fiction[i].price);
+        SCIFI[i].price_.setPosition(100, 100);
+        SCIFI[i].price_.setCharacterSize(50);
+        SCIFI[i].price_.setFont(italiana);
+
+        SCIFI[i].numofpages_.setString(science_fiction[i].numofpages);
+        SCIFI[i].numofpages_.setPosition(100, 100);
+        SCIFI[i].numofpages_.setCharacterSize(50);
+        SCIFI[i].numofpages_.setFont(italiana);
+
+        SCIFI[i].review_.setString(science_fiction[i].review);
+        SCIFI[i].review_.setPosition(100, 100);
+        SCIFI[i].review_.setCharacterSize(50);
+        SCIFI[i].review_.setFont(italiana);
+
+        SCIFI[i].cover.setScale(0.5, 0.5);
+        SCIFI[i].cover.setTexture(f1t);
+        SCIFI[i].cover.setPosition(100, 100);
+    }
 
 
 }
+void draw_displaybook(DISPLAYBOOK displaybook, int section, int i) {
 
-void draw_displaybook(DISPLAYBOOK displaybook) {
-    window.draw(displaybook.author_);
-    window.draw(displaybook.cover);
-    window.draw(displaybook.description_);
-    window.draw(displaybook.numofpages_);
-    window.draw(displaybook.price_);
-    window.draw(displaybook.review_);
-    window.draw(displaybook.status_);
-    window.draw(displaybook.title_);
-    window.draw(displaybook.type_);
+    if (section == 1)
+    {
+        window.draw(FANTASY[i].author_);
+        window.draw(FANTASY[i].cover);
+        window.draw(FANTASY[i].numofpages_);
+        window.draw(FANTASY[i].price_);
+        window.draw(FANTASY[i].review_);
+        window.draw(FANTASY[i].status_);
+        window.draw(FANTASY[i].title_);
+        window.draw(FANTASY[i].type_);
+    }
+    else if (section == 2)
+    {
+        window.draw(MYSTERY[i].author_);
+        window.draw(MYSTERY[i].cover);
+        window.draw(MYSTERY[i].numofpages_);
+        window.draw(MYSTERY[i].price_);
+        window.draw(MYSTERY[i].review_);
+        window.draw(MYSTERY[i].status_);
+        window.draw(MYSTERY[i].title_);
+        window.draw(MYSTERY[i].type_);
+    }
+    else if (section == 3)
+    {
+        window.draw(ROMANCE[i].author_);
+        window.draw(ROMANCE[i].cover);
+        window.draw(ROMANCE[i].numofpages_);
+        window.draw(ROMANCE[i].price_);
+        window.draw(ROMANCE[i].review_);
+        window.draw(ROMANCE[i].status_);
+        window.draw(ROMANCE[i].title_);
+        window.draw(ROMANCE[i].type_);
+    }
+
+    else if (section == 4)
+    {
+        window.draw(NONFICTION[i].author_);
+        window.draw(NONFICTION[i].cover);
+        window.draw(NONFICTION[i].numofpages_);
+        window.draw(NONFICTION[i].price_);
+        window.draw(NONFICTION[i].review_);
+        window.draw(NONFICTION[i].status_);
+        window.draw(NONFICTION[i].title_);
+        window.draw(NONFICTION[i].type_);
+
+
+    }
+
+    else
+    {
+        window.draw(SCIFI[i].author_);
+        window.draw(SCIFI[i].cover);
+        window.draw(SCIFI[i].numofpages_);
+        window.draw(SCIFI[i].price_);
+        window.draw(SCIFI[i].review_);
+        window.draw(SCIFI[i].status_);
+        window.draw(SCIFI[i].title_);
+        window.draw(SCIFI[i].type_);
+
+
+
+    }
 }
 
-void set_dropdownbox(DROPDOWNBOX& dropdownbox) {
+void set_dropdownbox(DROPDOWNBOX& dropdownbox , HOME home) {
     dropdownbox.box.setSize(Vector2f(460, 50));
     dropdownbox.box.setFillColor(Color(0, 141, 220));
     dropdownbox.box.setPosition(40, 70);
@@ -988,77 +1273,76 @@ void set_dropdownbox(DROPDOWNBOX& dropdownbox) {
     dropdownbox.boxLabel.setCharacterSize(50);
 
     Text book1, book2, book3, book4, book5, book6, book7, book8, book9, book10;
-    
-    book1.setFont(italiana);
-    book1.setString(fantasy[0].title);
-    book1.setCharacterSize(40);
-    book1.setFillColor(Color::White);
-    book1.setPosition(50, 150);
-    dropdownbox.books.push_back(book1);
+        book1.setFont(italiana);
+        book1.setString(fantasy[0].title);
+        book1.setCharacterSize(40);
+        book1.setFillColor(Color::White);
+        book1.setPosition(50, 150);
+        dropdownbox.books.push_back(book1);
 
-    book2.setFont(italiana);
-    book2.setString(fantasy[1].title);
-    book2.setCharacterSize(40);
-    book2.setFillColor(Color::White);
-    book2.setPosition(50, 200);
-    dropdownbox.books.push_back(book2);
+        book2.setFont(italiana);
+        book2.setString(fantasy[1].title);
+        book2.setCharacterSize(40);
+        book2.setFillColor(Color::White);
+        book2.setPosition(50, 200);
+        dropdownbox.books.push_back(book2);
 
-    book3.setFont(italiana);
-    book3.setString(fantasy[2].title);
-    book3.setCharacterSize(40);
-    book3.setFillColor(Color::White);
-    book3.setPosition(50, 250);
-    dropdownbox.books.push_back(book3);
+        book3.setFont(italiana);
+        book3.setString(fantasy[2].title);
+        book3.setCharacterSize(40);
+        book3.setFillColor(Color::White);
+        book3.setPosition(50, 250);
+        dropdownbox.books.push_back(book3);
 
-    book4.setFont(italiana);
-    book4.setString(fantasy[3].title);
-    book4.setCharacterSize(40);
-    book4.setFillColor(Color::White);
-    book4.setPosition(50, 300);
-    dropdownbox.books.push_back(book4);
+        book4.setFont(italiana);
+        book4.setString(fantasy[3].title);
+        book4.setCharacterSize(40);
+        book4.setFillColor(Color::White);
+        book4.setPosition(50, 300);
+        dropdownbox.books.push_back(book4);
 
-    book5.setFont(italiana);
-    book5.setString(fantasy[4].title);
-    book5.setCharacterSize(40);
-    book5.setFillColor(Color::White);
-    book5.setPosition(50, 350);
-    dropdownbox.books.push_back(book5);
+        book5.setFont(italiana);
+        book5.setString(fantasy[4].title);
+        book5.setCharacterSize(40);
+        book5.setFillColor(Color::White);
+        book5.setPosition(50, 350);
+        dropdownbox.books.push_back(book5);
 
-    book6.setFont(italiana);
-    book6.setString(fantasy[5].title);
-    book6.setCharacterSize(40);
-    book6.setFillColor(Color::White);
-    book6.setPosition(50, 400);
-    dropdownbox.books.push_back(book6);
+        book6.setFont(italiana);
+        book6.setString(fantasy[5].title);
+        book6.setCharacterSize(40);
+        book6.setFillColor(Color::White);
+        book6.setPosition(50, 400);
+        dropdownbox.books.push_back(book6);
 
-    book7.setFont(italiana);
-    book7.setString(fantasy[6].title);
-    book7.setCharacterSize(40);
-    book7.setFillColor(Color::White);
-    book7.setPosition(50, 450);
-    dropdownbox.books.push_back(book7);
+        book7.setFont(italiana);
+        book7.setString(fantasy[6].title);
+        book7.setCharacterSize(40);
+        book7.setFillColor(Color::White);
+        book7.setPosition(50, 450);
+        dropdownbox.books.push_back(book7);
 
-    book8.setFont(italiana);
-    book8.setString(fantasy[7].title);
-    book8.setCharacterSize(40);
-    book8.setFillColor(Color::White);
-    book8.setPosition(50, 500);
-    dropdownbox.books.push_back(book8);
+        book8.setFont(italiana);
+        book8.setString(fantasy[7].title);
+        book8.setCharacterSize(40);
+        book8.setFillColor(Color::White);
+        book8.setPosition(50, 500);
+        dropdownbox.books.push_back(book8);
 
-    book9.setFont(italiana);
-    book9.setString(fantasy[8].title);
-    book9.setCharacterSize(40);
-    book9.setFillColor(Color::White);
-    book9.setPosition(50, 550);
-    dropdownbox.books.push_back(book9);
+        book9.setFont(italiana);
+        book9.setString(fantasy[8].title);
+        book9.setCharacterSize(40);
+        book9.setFillColor(Color::White);
+        book9.setPosition(50, 550);
+        dropdownbox.books.push_back(book9);
 
-    book10.setFont(italiana);
-    book10.setString(fantasy[9].title);
-    book10.setCharacterSize(40);
-    book10.setFillColor(Color::White);
-    book10.setPosition(50, 600);
-    dropdownbox.books.push_back(book10);
-
+        book10.setFont(italiana);
+        book10.setString(fantasy[9].title);
+        book10.setCharacterSize(40);
+        book10.setFillColor(Color::White);
+        book10.setPosition(50, 600);
+        dropdownbox.books.push_back(book10);
+        
 }
 void draw_dropdownbox(DROPDOWNBOX dropdownbox) {
     window.draw(dropdownbox.shade);
@@ -1067,5 +1351,4 @@ void draw_dropdownbox(DROPDOWNBOX dropdownbox) {
     for (const auto& text : dropdownbox.books) {
         window.draw(text);
     }
-
 }

@@ -350,7 +350,7 @@ void counetr_to_file()
 //******************************	 End of transitions		*************************
 
 Font italiana, AbrilFatface_Regular;
-Texture homeIcon_texture, cartIcon_texture, fantacy_texture, mystery_texture, romance_texture, scienceFiction_texture, nonFiction_texture;
+Texture homeIcon_texture, cartIcon_texture, fantacy_texture, mystery_texture, romance_texture, scienceFiction_texture, nonFiction_texture , f1t;
 
 /////////     SFML code ////////////
 struct STARTING_PAGE {
@@ -359,7 +359,7 @@ struct STARTING_PAGE {
     bool visible = true;
 };
 struct  SIGN_UP {
-    Text sign_up_label, sign_up_username, sign_up_password, reader, administrator, sign_up_submit;
+    Text sign_up_label, sign_up_username, sign_up_password, reader, administrator, sign_up_submit ,wrongans;
     RectangleShape sign_up_submit_button, sign_up_input_username, sign_up_input_password;
     CircleShape reader_check, administrator_check;
     String userInput, passInput;
@@ -387,6 +387,12 @@ struct MENU
     Text logOut;
     bool visible = false;
 };
+struct DISPLAYBOOK
+{
+    Text title_, author_, description_, type_, status_, price_, numofpages_, review_;
+    Sprite cover;
+    bool visible = false;
+};
 
 void texturesANDfonts();
 void set_starting_page(STARTING_PAGE&);
@@ -399,6 +405,8 @@ void set_home(HOME&);
 void draw_home(HOME);
 void set_menu(MENU&);
 void draw_menu(MENU);
+void set_displaybook(DISPLAYBOOK&);
+void draw_displaybook(DISPLAYBOOK);
 
 int main() {
     STARTING_PAGE starting_page;
@@ -406,6 +414,9 @@ int main() {
     LOG_IN login_page;
     HOME home;
     MENU menu;
+    DISPLAYBOOK displaybook;
+
+    bool check_user = false;
 
     texturesANDfonts();
     set_starting_page(starting_page);
@@ -413,6 +424,8 @@ int main() {
     set_login(login_page);
     set_home(home);
     set_menu(menu);
+    set_displaybook(displaybook);
+
 
     //////////// background ///////////// 
     Texture backgroundTexture;
@@ -430,6 +443,7 @@ int main() {
 
             case Event::TextEntered:        // Handle text input
                 if (event.text.unicode >= 32 && event.text.unicode <= 126) {
+
                     if (sign_up_page.focusedTextField == 0) {
                         sign_up_page.userText.setString(sign_up_page.userText.getString() + static_cast<char>(event.text.unicode));
                     }
@@ -461,13 +475,21 @@ int main() {
                     FloatRect clearButtonBounds = sign_up_page.sign_up_submit_button.getGlobalBounds();
                     Vector2f mousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
                     if (clearButtonBounds.contains(mousePosition)) {       // Clear text fields
-                        sign_up_page.userText.setString("");
-                        sign_up_page.passText.setString("");
+                        string user = "ooo";
+                        sign_up_page.userInput = sign_up_page.userText.getString();
+                        if (sign_up_page.userInput == user) {
+                            sign_up_page.visible = false;
+                            home.visible = true;
+                        }
+                        else{
+                            check_user = true;
+                            sign_up_page.userText.setString("");
+                            sign_up_page.passText.setString("");
+                        }
                     }
                     FloatRect clearButtonBounds2 = login_page.login_submit_button.getGlobalBounds();
                     Vector2f mousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
                     if (clearButtonBounds2.contains(mousePosition2)) {       // Clear text fields
-                        
                         login_page.userText.setString("");
                         login_page.passText.setString("");
                     }
@@ -483,28 +505,27 @@ int main() {
             default:         break;
             }
         }
-
+       
         window.clear();
         window.draw(background);
-
+        draw_displaybook(displaybook);
         // Draw the visible page
-        if (starting_page.visible) {
+        /*if (starting_page.visible) {
             draw_starting_page(starting_page);
+            
         }
         else if (sign_up_page.visible) {
             draw_sign_up(sign_up_page);
+            if (check_user) {
+                window.draw(sign_up_page.wrongans);
+            }
         }
-
+        else if(home.visible)
+        {
+            draw_home(home);
+        }*/
         window.display();
 
-        //window.clear();
-        //window.draw(background);
-        //draw_starting_page(starting_page);
-        ////draw_sign_up(sign_up_page);
-        ////draw_login(login_page);
-        ////draw_home(home);
-        ////draw_menu(menu);
-        //window.display();
     }
 
     return 0;
@@ -520,6 +541,7 @@ void texturesANDfonts() {
     nonFiction_texture.loadFromFile("5.png");
     homeIcon_texture.loadFromFile("home.png");
     cartIcon_texture.loadFromFile("cart.png");
+    f1t.loadFromFile("Dance Of Thieves.png");
 }
 /****************                Starting page             ****************/
 
@@ -627,6 +649,13 @@ void set_sign_up(SIGN_UP& sign_up_page) {
     sign_up_page.passText.setCharacterSize(30);
     sign_up_page.passText.setFillColor(sf::Color::White);
     sign_up_page.passText.setPosition(500, 580);
+
+    sign_up_page.wrongans.setString(" Check wrong email or password !");
+    sign_up_page.wrongans.setFont(italiana);
+    sign_up_page.wrongans.setCharacterSize(50);
+    sign_up_page.wrongans.setFillColor(sf::Color::Red);
+    sign_up_page.wrongans.setPosition(1000, 300);
+
 
 }
 void draw_sign_up(SIGN_UP sign_up_page) {
@@ -796,4 +825,29 @@ void draw_menu(MENU menu) {
     window.draw(menu.homeIcon_sprite);
     window.draw(menu.cartIcon_sprite);
     window.draw(menu.logOut);
+}
+
+void set_displaybook(DISPLAYBOOK& displaybook) {
+    displaybook.title_.setString("fmdkjfoidjsf");
+    displaybook.title_.setPosition(100, 100);
+    displaybook.title_.setCharacterSize(50);
+    displaybook.title_.setFont(italiana);
+    
+    displaybook.cover.setScale(0.5, 0.5);
+    displaybook.cover.setTexture(f1t);
+    displaybook.cover.setPosition(100, 100);
+
+
+}
+
+void draw_displaybook(DISPLAYBOOK displaybook) {
+    window.draw(displaybook.author_);
+    window.draw(displaybook.cover);
+    window.draw(displaybook.description_);
+    window.draw(displaybook.numofpages_);
+    window.draw(displaybook.price_);
+    window.draw(displaybook.review_);
+    window.draw(displaybook.status_);
+    window.draw(displaybook.title_);
+    window.draw(displaybook.type_);
 }

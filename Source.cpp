@@ -363,17 +363,19 @@ struct  SIGN_UP {
     RectangleShape sign_up_submit_button, sign_up_input_username, sign_up_input_password;
     CircleShape reader_check, administrator_check;
     String userInput, passInput;
+    string userInput_, passInput_, message ;
     Text userText, passText;
     int focusedTextField = 0;
-    bool visible = false;
+    bool visible = false , isAdmin , used ;
 };
 struct  LOG_IN {
     Text login_label, login_username, login_password, login_submit;
     RectangleShape login_submit_button, login_input_username, login_input_password;
     String userInput, passInput;
+    string message ;
     Text userText, passText;
     int focusedTextField = 0;
-    bool visible = false;
+    bool visible = false, found = true;
 };
 struct HOME
 {
@@ -393,6 +395,12 @@ struct DISPLAYBOOK
     Sprite cover;
     bool visible = false;
 };
+struct DROPDOWNBOX
+{
+    RectangleShape box;
+    Text boxLabel;
+    vector<Text>books;
+};
 
 void texturesANDfonts();
 void set_starting_page(STARTING_PAGE&);
@@ -407,6 +415,8 @@ void set_menu(MENU&);
 void draw_menu(MENU);
 void set_displaybook(DISPLAYBOOK&);
 void draw_displaybook(DISPLAYBOOK);
+void set_dropdownbox(DROPDOWNBOX&);
+void draw_dropdownbox(DROPDOWNBOX);
 
 int main() {
     STARTING_PAGE starting_page;
@@ -415,8 +425,11 @@ int main() {
     HOME home;
     MENU menu;
     DISPLAYBOOK displaybook;
+    DROPDOWNBOX dropdownbox;
 
     bool check_user = false;
+    Clock clock;
+    Time timeLimit = seconds(10.0f); // 10 seconds
 
     texturesANDfonts();
     set_starting_page(starting_page);
@@ -425,7 +438,7 @@ int main() {
     set_home(home);
     set_menu(menu);
     set_displaybook(displaybook);
-
+    set_dropdownbox(dropdownbox);
 
     //////////// background ///////////// 
     Texture backgroundTexture;
@@ -471,59 +484,146 @@ int main() {
                     }
                 }            break;
             case Event::MouseButtonPressed:      // Handle mouse button presses
-                if (event.mouseButton.button == Mouse::Left) {        // Check if Clear button was clicked
-                    FloatRect clearButtonBounds = sign_up_page.sign_up_submit_button.getGlobalBounds();
-                    Vector2f mousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
-                    if (clearButtonBounds.contains(mousePosition)) {       // Clear text fields
-                        string user = "ooo";
-                        sign_up_page.userInput = sign_up_page.userText.getString();
-                        if (sign_up_page.userInput == user) {
-                            sign_up_page.visible = false;
-                            home.visible = true;
-                        }
-                        else{
-                            check_user = true;
-                            sign_up_page.userText.setString("");
-                            sign_up_page.passText.setString("");
-                        }
-                    }
-                    FloatRect clearButtonBounds2 = login_page.login_submit_button.getGlobalBounds();
-                    Vector2f mousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
-                    if (clearButtonBounds2.contains(mousePosition2)) {       // Clear text fields
-                        login_page.userText.setString("");
-                        login_page.passText.setString("");
-                    }
-                    FloatRect bounds = starting_page.sign_up_button.getGlobalBounds();
-                    Vector2f mousePosition3 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
-                    if (bounds.contains(mousePosition3)) {
+                if (event.mouseButton.button == Mouse::Left) {        // Check if button was clicked
+                    FloatRect signup_button = starting_page.sign_up_button.getGlobalBounds();
+                    Vector2f StartingmousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (signup_button.contains(StartingmousePosition)) {     
                         // The button was clicked!
                         // Hide the starting_page and draw the sign_up_page
                         starting_page.visible = false;
                         sign_up_page.visible = true;
+                    }    
+                    
+                    FloatRect login_button = starting_page.log_in_button.getGlobalBounds();
+                    Vector2f StartingmousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (login_button.contains(StartingmousePosition2)) {
+                        // The button was clicked!
+                        // Hide the starting_page and draw the login_page
+                        starting_page.visible = false;
+                        login_page.visible = true;
                     }
+                   
+                    FloatRect AdminCheck = sign_up_page.administrator_check.getGlobalBounds();
+                    Vector2f adminCheckmousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (AdminCheck.contains(adminCheckmousePosition)) {
+                        sign_up_page.isAdmin = true;
+                        sign_up_page.administrator_check.setFillColor(Color::White);
+                        sign_up_page.reader_check.setFillColor(Color(255, 255, 255, 128));
+                    }
+                    FloatRect AdminCheck2 = sign_up_page.reader_check.getGlobalBounds();
+                    Vector2f adminCheckmousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (AdminCheck2.contains(adminCheckmousePosition2)) {
+                        sign_up_page.isAdmin = false;
+                        sign_up_page.reader_check.setFillColor(Color::White);
+                        sign_up_page.administrator_check.setFillColor(Color(255, 255, 255, 128));
+                    }
+
+                    FloatRect signup_submitBottonBounds = sign_up_page.sign_up_submit_button.getGlobalBounds();
+                    Vector2f signupMousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (signup_submitBottonBounds.contains(signupMousePosition)) {       
+                        string userType_signin, user_name__, password__;
+                        sign_up_page.userInput = sign_up_page.userText.getString();
+                        sign_up_page.passInput = sign_up_page.passText.getString();
+                        ifstream read("ourfile.txt");
+                        ofstream outfile;
+                        outfile.open("ourfile.txt", ios::app); // Change file open mode to append
+                        if (outfile.is_open())
+                        {
+                            if (sign_up_page.isAdmin) {
+                                outfile << "admin" << endl;
+                            }
+                            else {
+                                outfile << "user" << endl;
+                            }
+                            user_name__ = sign_up_page.userInput;  password__ = sign_up_page.passInput;
+                            outfile << user_name__ << endl << password__ << endl;
+                            cout << "\n\t\tRegistration completed\n";
+                            sign_up_page.userText.setString("");
+                            sign_up_page.passText.setString("");
+                            sign_up_page.visible = false;
+                            draw_menu(menu);
+                            home.visible = true;
+                        }
+                        outfile.close();
+                    }
+
+                    FloatRect login_submitButtonBounds2 = login_page.login_submit_button.getGlobalBounds();
+                    Vector2f loginmousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (login_submitButtonBounds2.contains(loginmousePosition2)) {       // Clear text fields
+                        login_page.userInput = login_page.userText.getString();
+                        login_page.passInput = login_page.passText.getString();
+                        string  userType_login, user_name, password_;		//user_name & password_ variables to read from file 
+                        ifstream read("ourfile.txt");
+                        while (getline(read, userType_login)) {
+                            getline(read, user_name);
+                            getline(read, password_);
+                            if (login_page.userInput == user_name && login_page.passInput == password_ && userType_login == "admin") {
+                                login_page.visible = false;
+                                home.visible = true;
+                                login_page.found = true;
+                                break;
+                            }
+                            else if (user_name == login_page.userInput && password_ == login_page.passInput && userType_login == "user") {
+                                login_page.visible = false;
+                                home.visible = true;
+                                login_page.found = true;
+                                break;
+                            }
+                            else {
+                                check_user = true;
+                            }
+                        }
+                        login_page.userText.setString("");
+                        login_page.passText.setString("");
+                    }
+
+                    FloatRect menubounds = menu.homeIcon_sprite.getGlobalBounds();
+                    Vector2f menumousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (menubounds.contains(menumousePosition)) {       // Clear text fields
+                        displaybook.visible = false;
+                        home.visible = true;
+                    }
+                    FloatRect menubounds2 = menu.logOut.getGlobalBounds();
+                    Vector2f menumousePosition2 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (menubounds2.contains(menumousePosition2)) {       // Clear text fields
+                        displaybook.visible = false;
+                        home.visible = false;
+                        login_page.visible = true;
+                    }
+                    FloatRect menubounds3 = menu.cartIcon_sprite.getGlobalBounds();
+                    Vector2f menumousePosition3 = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (menubounds3.contains(menumousePosition3)) {       // Clear text fields
+                        displaybook.visible = false;
+                        home.visible = false;
+                    }
+
                 }            break;
             default:         break;
             }
         }
        
+        
+
         window.clear();
         window.draw(background);
-        draw_displaybook(displaybook);
+        //draw_displaybook(displaybook);
         // Draw the visible page
-        /*if (starting_page.visible) {
+        if (starting_page.visible) {
             draw_starting_page(starting_page);
-            
         }
         else if (sign_up_page.visible) {
             draw_sign_up(sign_up_page);
-            if (check_user) {
-                window.draw(sign_up_page.wrongans);
-            }
         }
-        else if(home.visible)
-        {
+        else if (login_page.visible) {
+            draw_login(login_page);
+        }
+        else if(home.visible){
+            draw_menu(menu);
             draw_home(home);
-        }*/
+        }
+        
+        draw_dropdownbox(dropdownbox);
+
         window.display();
 
     }
@@ -650,7 +750,7 @@ void set_sign_up(SIGN_UP& sign_up_page) {
     sign_up_page.passText.setFillColor(sf::Color::White);
     sign_up_page.passText.setPosition(500, 580);
 
-    sign_up_page.wrongans.setString(" Check wrong email or password !");
+    sign_up_page.wrongans.setString("Try again");
     sign_up_page.wrongans.setFont(italiana);
     sign_up_page.wrongans.setCharacterSize(50);
     sign_up_page.wrongans.setFillColor(sf::Color::Red);
@@ -850,4 +950,28 @@ void draw_displaybook(DISPLAYBOOK displaybook) {
     window.draw(displaybook.status_);
     window.draw(displaybook.title_);
     window.draw(displaybook.type_);
+}
+
+void set_dropdownbox(DROPDOWNBOX& dropdownbox) {
+    dropdownbox.box.setSize(Vector2f(400, 50));
+    dropdownbox.box.setFillColor(Color(0, 141, 220));
+    dropdownbox.box.setPosition(40, 70);
+
+    dropdownbox.boxLabel.setString("Books");
+    dropdownbox.boxLabel.setFont(italiana);
+    dropdownbox.boxLabel.setPosition(180, 60);
+    dropdownbox.boxLabel.setCharacterSize(50);
+
+    Text text1(fantasy[0].title, italiana, 24);
+    text1.setPosition(40,90);
+    //text1.setColor(Color::White);
+    dropdownbox.books.push_back(text1);
+
+}
+void draw_dropdownbox(DROPDOWNBOX dropdownbox) {
+    window.draw(dropdownbox.box);
+    window.draw(dropdownbox.boxLabel);
+    for (const auto& text : dropdownbox.books) {
+        window.draw(text);
+    }
 }

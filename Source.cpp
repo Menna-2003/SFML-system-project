@@ -448,7 +448,7 @@ void draw_home(HOME);
 void set_menu(MENU&);
 void draw_menu(MENU);
 void set_displaybook(DISPLAYBOOK&, int section, int i);
-void draw_displaybook(DISPLAYBOOK ,int,int);
+void draw_displaybook(int,int);
 void set_dropdownbox(DROPDOWNBOX& , HOME);
 void draw_dropdownbox(DROPDOWNBOX);
 
@@ -473,7 +473,7 @@ int main() {
     set_login(login_page);
     set_home(home);
     set_menu(menu);
-    set_displaybook(displaybook ,1 ,1 );
+    
     set_dropdownbox(dropdownbox , home);
 
     //////////// background ///////////// 
@@ -635,6 +635,7 @@ int main() {
                     FloatRect fantacyClick = home.fantacy_sprite.getGlobalBounds();
                     Vector2f fantacyClickmousePosition = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
                     if (fantacyClick.contains(fantacyClickmousePosition)) {       
+                        set_displaybook(displaybook, 1, 1);
                         home.section = 1;
                         home.visible = false;
                         dropdownbox.visible = true;
@@ -667,7 +668,7 @@ int main() {
         else if(dropdownbox.visible){
             draw_dropdownbox(dropdownbox);
             draw_menu(menu);
-            draw_displaybook(displaybook , 1 , 1);
+            draw_displaybook(1 , 1);
         }
         window.display();
 
@@ -678,7 +679,7 @@ int main() {
 }
 
 void texturesANDfonts() {
-    italiana.loadFromFile("italiana-regular.otf");
+    italiana.loadFromFile("AbrilFatface-Regular.otf");
     AbrilFatface_Regular.loadFromFile("AbrilFatface-Regular.otf");
     fantacy_texture.loadFromFile("1.png");
     mystery_texture.loadFromFile("2.png");
@@ -976,49 +977,48 @@ void draw_menu(MENU menu) {
 void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
     if (section == 1) {
         FANTASY[i].title_.setString(fantasy[i].title);
-        FANTASY[i].title_.setPosition(300, 300);
+        FANTASY[i].title_.setPosition(590, 530);
         FANTASY[i].title_.setCharacterSize(50);
         FANTASY[i].title_.setFont(italiana);
 
-        FANTASY[i].author_.setString(fantasy[i].author);
-        FANTASY[i].author_.setPosition(100, 100);
+        FANTASY[i].author_.setString("Auther : "+fantasy[i].author);
+        FANTASY[i].author_.setPosition(590, 630);
         FANTASY[i].author_.setCharacterSize(50);
         FANTASY[i].author_.setFont(italiana);
 
 
-        FANTASY[i].type_.setString(fantasy[i].type);
-        FANTASY[i].type_.setPosition(100, 100);
+        FANTASY[i].type_.setString("Type : "+fantasy[i].type);
+        FANTASY[i].type_.setPosition(1200, 180);
         FANTASY[i].type_.setCharacterSize(50);
         FANTASY[i].type_.setFont(italiana);
 
 
-        FANTASY[i].status_.setString(mystery[i].status);
-        FANTASY[i].status_.setPosition(100, 100);
+        FANTASY[i].status_.setString("Status : "+mystery[i].status);
+        FANTASY[i].status_.setPosition(1200, 280);
         FANTASY[i].status_.setCharacterSize(50);
         FANTASY[i].status_.setFont(italiana);
 
-        FANTASY[i].price_.setString(fantasy[i].price);
-        FANTASY[i].price_.setPosition(100, 100);
+        FANTASY[i].price_.setString("Fantasy : "+fantasy[i].price);
+        FANTASY[i].price_.setPosition(1200, 380);
         FANTASY[i].price_.setCharacterSize(50);
         FANTASY[i].price_.setFont(italiana);
 
         FANTASY[i].numofpages_.setString(fantasy[i].numofpages);
-        FANTASY[i].numofpages_.setPosition(100, 100);
+        FANTASY[i].numofpages_.setPosition(1200, 480);
         FANTASY[i].numofpages_.setCharacterSize(50);
         FANTASY[i].numofpages_.setFont(italiana);
 
         FANTASY[i].review_.setString(fantasy[i].review);
-        FANTASY[i].review_.setPosition(100, 100);
+        FANTASY[i].review_.setPosition(1200, 580);
         FANTASY[i].review_.setCharacterSize(50);
         FANTASY[i].review_.setFont(italiana);
 
 
-        FANTASY[i].cover.setScale(0.5, 0.5);
+        FANTASY[i].cover.setScale(0.4, 0.4);
         FANTASY[i].cover.setTexture(f1t);
-        FANTASY[i].cover.setPosition(100, 100);
+        FANTASY[i].cover.setPosition(590, 120);
 
     }
-
     else if (section == 2)
     {
         MYSTERY[i].title_.setString(mystery[i].title);
@@ -1060,7 +1060,6 @@ void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
         displaybook.cover.setTexture(f1t);
         displaybook.cover.setPosition(100, 100);
     }
-
     else if (section = 3)
     {
         ROMANCE[i].title_.setString(romance[i].title);
@@ -1102,7 +1101,6 @@ void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
         ROMANCE[i].cover.setTexture(f1t);
         ROMANCE[i].cover.setPosition(100, 100);
     }
-
     else if (section = 4)
     {
         NONFICTION[i].title_.setString(non_fiction[i].title);
@@ -1147,7 +1145,6 @@ void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
         NONFICTION[i].cover.setPosition(100, 100);
 
     }
-
     else
     {
         SCIFI[i].title_.setString(science_fiction[i].title);
@@ -1189,10 +1186,8 @@ void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
         SCIFI[i].cover.setTexture(f1t);
         SCIFI[i].cover.setPosition(100, 100);
     }
-
-
 }
-void draw_displaybook(DISPLAYBOOK displaybook, int section, int i) {
+void draw_displaybook(int section, int i) {
 
     if (section == 1)
     {
@@ -1271,6 +1266,7 @@ void set_dropdownbox(DROPDOWNBOX& dropdownbox , HOME home) {
     dropdownbox.boxLabel.setFont(italiana);
     dropdownbox.boxLabel.setPosition(200, 60);
     dropdownbox.boxLabel.setCharacterSize(50);
+    
 
     Text book1, book2, book3, book4, book5, book6, book7, book8, book9, book10;
         book1.setFont(italiana);

@@ -1003,12 +1003,12 @@ void set_displaybook(DISPLAYBOOK& displaybook, int section, int i) {
         FANTASY[i].price_.setCharacterSize(50);
         FANTASY[i].price_.setFont(italiana);
 
-        FANTASY[i].numofpages_.setString(fantasy[i].numofpages);
+        FANTASY[i].numofpages_.setString("Number of pages : "+fantasy[i].numofpages);
         FANTASY[i].numofpages_.setPosition(1200, 480);
         FANTASY[i].numofpages_.setCharacterSize(50);
         FANTASY[i].numofpages_.setFont(italiana);
 
-        FANTASY[i].review_.setString(fantasy[i].review);
+        FANTASY[i].review_.setString("review : "+fantasy[i].review);
         FANTASY[i].review_.setPosition(1200, 580);
         FANTASY[i].review_.setCharacterSize(50);
         FANTASY[i].review_.setFont(italiana);
